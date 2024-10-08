@@ -1,0 +1,25 @@
+// Rule for Water Simulation
+attr floodLevel = 0     // Attribute to control the water level, initially set to 0 (default), but can be adjusted to simulate rising water
+attr maxFloodLevel = 20 // Attribute that defines the maximum flood height (used for visualization purposes, though not explicitly in this rule)
+
+@Range(min=-180,max=180,restricted=false)
+attr Rotation = 0       // Attribute to control rotation of the texture or the shape, with a range from -180 to 180 degrees, default set to 0
+
+@Range(min=0.1,max=20.1,restricted=false)
+attr Scale = 5          // Attribute to control the scaling of the texture, with values ranging from 0.1 to 20.1. The default scale is set to 5
+
+@File
+attr Texture = "SeaWater.jpg"  // Attribute to specify the texture file used for the water surface (SeaWater.jpg). The @File keyword allows a file picker in the UI
+
+attr SizeX = 100        // Attribute to control the X-axis size of the projection (affects the width of the texture's tiling along the X-axis)
+attr SizeZ = 100        // Attribute to control the Z-axis size of the projection (affects the width of the texture's tiling along the Z-axis)
+
+// Main rule for generating the water surface
+FloodWater -->  
+    extrude(0.1)                // Extrudes the shape by 0.1 units to give it a slight thickness (creating a water plane surface)
+    t(0, floodLevel, 0)         // Translates (moves) the water plane vertically according to the floodLevel attribute (raising or lowering the water level)
+    setupProjection(0, scope.xz, SizeX * Scale, SizeZ * Scale)  
+                                // Sets up the UV projection for the texture on the XZ plane. 
+                                // The SizeX and SizeZ attributes determine the base size of the texture mapping, and Scale adjusts how much the texture tiles or stretches
+    projectUV(0)                // Projects the UV coordinates for the texture onto the shape, using UV set 0 (default). This ensures the texture is mapped correctly
+    texture(Texture)            // Applies the texture specified by the Texture attribute (SeaWater.jpg), which is mapped according to the UV projection
